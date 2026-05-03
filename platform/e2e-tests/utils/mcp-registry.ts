@@ -193,10 +193,11 @@ export async function addSharedLocalConnection(params: {
   timeoutMs?: number;
 }): Promise<void> {
   await openManageCredentialsDialog(params.page, params.catalogItemName);
-  const sharedConnectionsSection = params.page.getByTestId(
-    E2eTestId.ManageCredentialsSharedConnectionsSection,
-  );
-  await sharedConnectionsSection
+  const credentialsDialog = params.page
+    .getByRole("dialog")
+    .filter({ visible: true })
+    .last();
+  await credentialsDialog
     .getByTestId(E2eTestId.ManageCredentialsAddToTeamButton)
     .click({
       timeout: params.timeoutMs ?? 15_000,
@@ -219,7 +220,7 @@ export async function addSharedLocalConnection(params: {
     }
 
     await expect(
-      sharedConnectionsSection.getByTestId(
+      credentialsDialog.getByTestId(
         E2eTestId.ManageCredentialsSharedConnectionsEmptyState,
       ),
     ).not.toBeVisible({

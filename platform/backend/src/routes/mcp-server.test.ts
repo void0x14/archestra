@@ -246,6 +246,45 @@ describe("mcp server inspect route", () => {
     ]);
   });
 
+  test("combines catalogId filter with non-admin access control", async ({
+    makeInternalMcpCatalog,
+    makeMcpServer,
+    makeUser,
+  }) => {
+    hasPermissionMock.mockResolvedValueOnce({ success: false });
+
+    const otherUser = await makeUser({ email: "catalog-owner@example.com" });
+    const accessibleCatalog = await makeInternalMcpCatalog({
+      serverType: "remote",
+    });
+    await makeMcpServer({
+      scope: "org",
+      ownerId: user.id,
+      catalogId: accessibleCatalog.id,
+    });
+
+    const inaccessibleCatalog = await makeInternalMcpCatalog({
+      serverType: "remote",
+    });
+    const inaccessibleServer = await makeMcpServer({
+      scope: "personal",
+      ownerId: otherUser.id,
+      catalogId: inaccessibleCatalog.id,
+    });
+    await McpServerUserModel.assignUserToMcpServer(
+      inaccessibleServer.id,
+      otherUser.id,
+    );
+
+    const response = await app.inject({
+      method: "GET",
+      url: `/api/mcp_server?catalogId=${inaccessibleCatalog.id}`,
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toEqual([]);
+  });
+
   test("filters out personal connections whose owner is not in the selected assignment team", async ({
     makeInternalMcpCatalog,
     makeMcpServer,

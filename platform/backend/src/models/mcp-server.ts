@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNotNull, isNull } from "drizzle-orm";
+import { and, eq, inArray, isNotNull, isNull, type SQL } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import mcpClient from "@/clients/mcp-client";
 import db, { schema } from "@/database";
@@ -168,6 +168,7 @@ class McpServerModel {
   static async findAll(
     userId?: string,
     isMcpServerAdmin?: boolean,
+    catalogId?: string,
   ): Promise<McpServer[]> {
     // Single query with LEFT JOINs for all related data including assigned users,
     // eliminating the consecutive DB query for user details.
@@ -209,6 +210,7 @@ class McpServerModel {
         eq(schema.mcpServerUsersTable.userId, assignedUsersTable.id),
       )
       .$dynamic();
+    const filters: SQL[] = [];
 
     // Apply access control filtering for non-MCP server admins
     if (userId && !isMcpServerAdmin) {
@@ -239,9 +241,16 @@ class McpServerModel {
         return [];
       }
 
-      query = query.where(
-        inArray(schema.mcpServersTable.id, accessibleMcpServerIds),
-      );
+      filters.push(inArray(schema.mcpServersTable.id, accessibleMcpServerIds));
+    }
+
+    // Filter by catalogId if provided
+    if (catalogId) {
+      filters.push(eq(schema.mcpServersTable.catalogId, catalogId));
+    }
+
+    if (filters.length > 0) {
+      query = query.where(and(...filters));
     }
 
     const results = await query;

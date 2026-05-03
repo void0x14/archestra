@@ -1,0 +1,99 @@
+{
+  "files": [
+    {
+      "filepath": "/home/void0x14/Documents/bounty-works/archestra/platform/benchmarks/opt5-mcp-sql.bench.ts",
+      "groups": [
+        {
+          "fullName": "benchmarks/opt5-mcp-sql.bench.ts > MCP server catalogId filtering: 1000 servers",
+          "benchmarks": [
+            {
+              "id": "2080320706_0_0",
+              "name": "Array.filter (JS) — before optimization",
+              "rank": 1,
+              "rme": 1.0554546029909848,
+              "samples": [],
+              "totalTime": 500.0012699999928,
+              "min": 0.00183999999990192,
+              "max": 1.8923470000000862,
+              "hz": 402574.977459563,
+              "period": 0.0024840093299153096,
+              "mean": 0.0024840093299153096,
+              "variance": 0.00003601565387688625,
+              "sd": 0.006001304347963554,
+              "sem": 0.000013376321842508497,
+              "df": 201287,
+              "critical": 1.96,
+              "moe": 0.000026217590811316655,
+              "p75": 0.0025800000000799628,
+              "p99": 0.004279999999994288,
+              "p995": 0.007990000000006603,
+              "p999": 0.023689999999987776,
+              "sampleCount": 201288,
+              "median": 0.002090000000009695
+            }
+          ]
+        },
+        {
+          "fullName": "benchmarks/opt5-mcp-sql.bench.ts > MCP server catalogId filtering: 10000 servers",
+          "benchmarks": [
+            {
+              "id": "2080320706_1_0",
+              "name": "Array.filter (JS) — large dataset",
+              "rank": 1,
+              "rme": 1.4185959940644177,
+              "samples": [],
+              "totalTime": 500.00163100000566,
+              "min": 0.020549999999957436,
+              "max": 0.540616,
+              "hz": 24517.920022544607,
+              "period": 0.04078649408597811,
+              "mean": 0.04078649408597811,
+              "variance": 0.0010682997148952495,
+              "sd": 0.032684854518496016,
+              "sem": 0.00029520182205255416,
+              "df": 12258,
+              "critical": 1.96,
+              "moe": 0.0005785955712230062,
+              "p75": 0.03521900000009737,
+              "p99": 0.14406899999994494,
+              "p995": 0.15897900000004483,
+              "p999": 0.34705800000006093,
+              "sampleCount": 12259,
+              "median": 0.027719999999817446
+            }
+          ]
+        },
+        {
+          "fullName": "benchmarks/opt5-mcp-sql.bench.ts > MCP server catalogId filtering: 50000 servers",
+          "benchmarks": [
+            {
+              "id": "2080320706_2_0",
+              "name": "Array.filter (JS) — very large dataset (before)",
+              "rank": 1,
+              "rme": 2.9089707884279328,
+              "samples": [],
+              "totalTime": 501.0668400000036,
+              "min": 0.45098699999994096,
+              "max": 1.8612570000000233,
+              "hz": 1253.3258037989413,
+              "period": 0.7978771337579675,
+              "mean": 0.7978771337579675,
+              "variance": 0.08806396981549854,
+              "sd": 0.2967557409983816,
+              "sem": 0.011841843239063949,
+              "df": 627,
+              "critical": 1.96,
+              "moe": 0.02321001274856534,
+              "p75": 0.9969730000000254,
+              "p99": 1.5813689999999951,
+              "p995": 1.676108000000113,
+              "p999": 1.8612570000000233,
+              "sampleCount": 628,
+              "median": 0.7163749999999709
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

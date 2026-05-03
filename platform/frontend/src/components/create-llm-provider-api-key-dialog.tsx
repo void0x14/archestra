@@ -1,6 +1,6 @@
 "use client";
 
-import { PROVIDERS_WITH_OPTIONAL_API_KEY } from "@shared";
+import { PROVIDERS_WITH_OPTIONAL_API_KEY } from "@shared/oauth";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";

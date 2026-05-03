@@ -1,4 +1,4 @@
-import type { SupportedProvider } from "@shared";
+import type { SupportedProvider } from "@shared/model-constants";
 import {
   boolean,
   jsonb,

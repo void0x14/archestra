@@ -263,6 +263,52 @@ describe("McpServerModel", () => {
       expect(nonMemberView.find((s) => s.id === server.id)).toBeUndefined();
     });
 
+    test("combines access control and catalog filters for non-admin users", async ({
+      makeInternalMcpCatalog,
+      makeMember,
+      makeOrganization,
+      makeUser,
+    }) => {
+      const organization = await makeOrganization();
+      const requester = await makeUser();
+      const otherUser = await makeUser();
+      await makeMember(requester.id, organization.id);
+      await makeMember(otherUser.id, organization.id);
+
+      const accessibleCatalog = await makeInternalMcpCatalog({
+        organizationId: organization.id,
+      });
+      await McpServerModel.create({
+        name: accessibleCatalog.name,
+        serverType: "remote",
+        catalogId: accessibleCatalog.id,
+        ownerId: requester.id,
+        scope: "org",
+      });
+
+      const inaccessibleCatalog = await makeInternalMcpCatalog({
+        organizationId: organization.id,
+      });
+      const inaccessibleServer = await McpServerModel.create({
+        name: inaccessibleCatalog.name,
+        serverType: "remote",
+        catalogId: inaccessibleCatalog.id,
+        ownerId: otherUser.id,
+        userId: otherUser.id,
+        scope: "personal",
+      });
+
+      const requesterView = await McpServerModel.findAll(
+        requester.id,
+        false,
+        inaccessibleCatalog.id,
+      );
+      expect(
+        requesterView.find((s) => s.id === inaccessibleServer.id),
+      ).toBeUndefined();
+      expect(requesterView).toHaveLength(0);
+    });
+
     test("returns all servers to an admin regardless of scope", async ({
       makeInternalMcpCatalog,
       makeMember,

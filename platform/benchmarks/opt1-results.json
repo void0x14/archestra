@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "filepath": "/home/void0x14/Documents/bounty-works/archestra/platform/benchmarks/opt1-subpath.bench.ts",
+      "groups": [
+        {
+          "fullName": "benchmarks/opt1-subpath.bench.ts > @shared subpath resolution benchmark",
+          "benchmarks": [
+            {
+              "id": "2042933308_0_0",
+              "name": "barrel import: resolve @shared (all exports)",
+              "rank": 1,
+              "rme": 0,
+              "samples": []
+            },
+            {
+              "id": "2042933308_0_1",
+              "name": "subpath import: resolve @shared/consts",
+              "rank": 2,
+              "rme": 0,
+              "samples": []
+            },
+            {
+              "id": "2042933308_0_2",
+              "name": "subpath import: resolve @shared/docs",
+              "rank": 3,
+              "rme": 0,
+              "samples": []
+            },
+            {
+              "id": "2042933308_0_3",
+              "name": "subpath import: resolve @shared/routes",
+              "rank": 4,
+              "rme": 0,
+              "samples": []
+            },
+            {
+              "id": "2042933308_0_4",
+              "name": "subpath import: resolve @shared/types",
+              "rank": 5,
+              "rme": 0,
+              "samples": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

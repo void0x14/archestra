@@ -1,11 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["ARCHESTRA_*", "NEXT_PUBLIC_ARCHESTRA_*", "CODEGEN"],
+  "globalEnv": ["ARCHESTRA_*"],
   "globalDependencies": [".env", "pnpm-workspace.yaml"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["NEXT_PUBLIC_ARCHESTRA_*"]
     },
     "dev": {
       "persistent": true,
@@ -53,10 +54,21 @@
       "cache": false
     },
     "codegen": {
+      "env": ["CODEGEN"],
       "cache": false
     },
     "@shared#codegen": {
       "dependsOn": ["@backend#codegen"],
+      "env": ["CODEGEN"],
+      "cache": false
+    },
+    "@shared#codegen:api-client-api": {
+      "dependsOn": ["@backend#codegen"],
+      "env": ["CODEGEN"],
+      "cache": false
+    },
+    "@shared#codegen:api-client-catalog": {
+      "env": ["CODEGEN"],
       "cache": false
     },
     "db:generate": {

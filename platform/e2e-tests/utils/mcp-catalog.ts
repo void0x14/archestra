@@ -47,6 +47,7 @@ export async function addCustomSelfHostedCatalogItem({
   await createDialog
     .getByRole("textbox", { name: "Arguments (one per line)" })
     .fill(`-c\n${singleLineCommand}`);
+  await createDialog.getByLabel("stdio").click();
   if (envVars) {
     await createDialog.getByRole("button", { name: "Add Variable" }).click();
     await createDialog

@@ -148,7 +148,9 @@ export function DataTable<TData, TValue>({
       : { getPaginationRowModel: getPaginationRowModel() }),
     // Only use client-side sorting when not using manual sorting
     ...(manualSorting ? {} : { getSortedRowModel: getSortedRowModel() }),
-    getFilteredRowModel: getFilteredRowModel(),
+    // Only use client-side filtering when not using manual pagination
+    // (server-paginated tables get data pre-filtered from the server)
+    ...(manualPagination ? {} : { getFilteredRowModel: getFilteredRowModel() }),
     ...(renderSubComponent
       ? {
           getExpandedRowModel: getExpandedRowModel(),

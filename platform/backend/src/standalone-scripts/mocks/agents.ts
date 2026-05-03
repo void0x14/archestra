@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { urlSlugify } from "@shared";
+import { urlSlugify } from "@shared/utils";
 import type { AgentScope, AgentType } from "@/types";
 
 // Raw agent data for direct database insertion (without junction table fields like teams)

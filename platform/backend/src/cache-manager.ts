@@ -1,5 +1,5 @@
 import KeyvPostgres from "@keyv/postgres";
-import { TimeInMs } from "@shared";
+import { TimeInMs } from "@shared/consts";
 import { sql } from "drizzle-orm";
 import Keyv from "keyv";
 import QuickLRU from "quick-lru";

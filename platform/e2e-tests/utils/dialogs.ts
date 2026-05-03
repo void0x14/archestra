@@ -9,29 +9,25 @@ export async function closeOpenDialogs(
   const dialogs = page.getByRole("dialog");
 
   while (Date.now() - start < timeoutMs) {
-    const count = await dialogs.count();
-    let hasVisibleDialog = false;
-    for (let index = 0; index < count; index += 1) {
-      if (await dialogs.nth(index).isVisible()) {
-        hasVisibleDialog = true;
-        break;
-      }
-    }
+    const dialog = dialogs.filter({ visible: true }).last();
 
-    if (!hasVisibleDialog) {
+    if (!(await dialog.isVisible().catch(() => false))) {
       return;
     }
 
     await page.keyboard.press("Escape");
-    await page.waitForTimeout(250);
+    if (!(await dialog.isVisible({ timeout: 500 }).catch(() => false))) {
+      continue;
+    }
 
-    const closeButton = dialogs
+    const closeButton = dialog
       .getByRole("button", { name: /close|done|cancel/i })
       .first();
     if (await closeButton.isVisible().catch(() => false)) {
-      await closeButton.click();
-      await page.waitForTimeout(250);
+      await closeButton.click({ timeout: 2000 }).catch(() => undefined);
     }
+
+    await expect(dialog).not.toBeVisible({ timeout: 5000 });
   }
 
   await expect(dialogs).not.toBeVisible({ timeout: 1000 });

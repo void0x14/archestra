@@ -55,7 +55,7 @@ async function ensureAdminAuthenticated(page: Page): Promise<void> {
   for (let attempt = 1; attempt <= 5; attempt++) {
     loginSucceeded = await loginViaApi(page, ADMIN_EMAIL, ADMIN_PASSWORD);
     if (loginSucceeded) break;
-    // Wait before retry
+    // intentional: retry delay between login attempts
     await page.waitForTimeout(2000);
   }
 
@@ -68,11 +68,41 @@ async function ensureAdminAuthenticated(page: Page): Promise<void> {
   await page.goto(`${UI_BASE_URL}/settings/identity-providers`);
   await page.waitForLoadState("domcontentloaded");
 
-  // Wait briefly for any redirects to complete
-  await page.waitForTimeout(1000);
+  // Wait for auth routing to settle without relying on network quiescence.
+  await expect
+    .poll(
+      async () => {
+        if (
+          await page
+            .getByRole("heading", { name: "Identity Providers" })
+            .isVisible()
+            .catch(() => false)
+        ) {
+          return "identity-providers";
+        }
+        if (
+          page.url().includes("/auth/sign-in") ||
+          (await page
+            .getByLabel("Email")
+            .isVisible()
+            .catch(() => false))
+        ) {
+          return "sign-in";
+        }
+        return "loading";
+      },
+      { timeout: 30_000, intervals: [500, 1000, 2000] },
+    )
+    .not.toBe("loading");
 
   // Check if we got redirected to sign-in (authentication failed)
-  if (page.url().includes("/auth/sign-in")) {
+  if (
+    page.url().includes("/auth/sign-in") ||
+    (await page
+      .getByLabel("Email")
+      .isVisible()
+      .catch(() => false))
+  ) {
     console.log(
       "API login appeared to fail (redirected to sign-in), trying UI fallback...",
     );
@@ -130,7 +160,10 @@ async function fillOidcProviderForm(
 ): Promise<void> {
   await page.getByLabel("Provider ID").fill(providerName);
   await page.getByLabel("Issuer").fill(KEYCLOAK_OIDC.issuer);
-  await page.getByLabel("Domain").fill(SSO_DOMAIN);
+  const domainInput = page.getByLabel("Domain");
+  if (await domainInput.isVisible().catch(() => false)) {
+    await domainInput.fill(SSO_DOMAIN);
+  }
   await page.getByLabel("Client ID").fill(KEYCLOAK_OIDC.clientId);
   await page.getByLabel("Client Secret").fill(KEYCLOAK_OIDC.clientSecret);
   await page
@@ -450,7 +483,6 @@ async function expectRolesPageAfterSsoLogin(
       await expect(async () => {
         await ssoPage.goto(`${UI_BASE_URL}/settings/roles`);
         await ssoPage.waitForLoadState("domcontentloaded");
-        await ssoPage.waitForLoadState("networkidle").catch(() => {});
 
         await expect(ssoPage).toHaveURL(/\/settings\/roles/, { timeout: 5000 });
         await expectActiveSession(ssoPage);
@@ -684,9 +716,13 @@ test.describe("Identity Provider OIDC E2E Flow with Keycloak", () => {
     // Click on Generic OIDC card to edit (our provider)
     await openIdentityProviderDialog(page, "Generic OIDC");
 
-    // Update the domain (use a subdomain to keep it valid for the same email domain)
-    await page.getByLabel("Domain").clear();
-    await page.getByLabel("Domain").fill(`updated.${SSO_DOMAIN}`);
+    // Generic OIDC hides domain editing; update a non-auth-critical setting.
+    const editDialog = page.getByRole("dialog", {
+      name: "Edit Identity Provider",
+    });
+    await editDialog
+      .getByRole("checkbox", { name: "Override User Info" })
+      .click();
 
     // Save changes
     await page.getByTestId(E2eTestId.IdentityProviderUpdateButton).click();

@@ -59,7 +59,6 @@ export async function assignCatalogCredentialToGateway(params: {
     .getByRole("option", { name: params.credentialName })
     .click();
   await params.page.keyboard.press("Escape");
-  await params.page.waitForTimeout(200);
   await saveOpenProfileDialog(params.page);
 }
 
@@ -202,7 +201,15 @@ async function openCatalogToolAssignment({
     await expect(visibleTokenSelect).toBeVisible({ timeout: 10_000 });
   }
 
-  await visibleTokenSelect.click();
+  await expect
+    .poll(
+      async () => {
+        await visibleTokenSelect.click({ timeout: 2_000 });
+        return "opened";
+      },
+      { timeout: 15_000, intervals: [250, 500, 1000] },
+    )
+    .toBe("opened");
 }
 
 function escapeRegExp(value: string): string {

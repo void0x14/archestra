@@ -7,6 +7,7 @@ import {
   EDITOR_EMAIL,
   ENGINEERING_TEAM_NAME,
   MARKETING_TEAM_NAME,
+  MEMBER_EMAIL,
 } from "../consts";
 import { expect, goToPage, test } from "../fixtures";
 import {
@@ -90,11 +91,9 @@ test.describe("Custom Self-hosted MCP Server - installation and static credentia
 
       if (user === "Member") {
         await openManageCredentialsDialog(page, catalogItemName);
-        await expect(
-          page.getByTestId(
-            E2eTestId.ManageCredentialsSharedConnectionsEmptyState,
-          ),
-        ).toBeVisible();
+        await expect(page.getByTestId(E2eTestId.CredentialOwner)).toContainText(
+          MEMBER_EMAIL,
+        );
         await closeOpenDialogs(page);
       } else {
         const expectedTeams = {
@@ -162,7 +161,7 @@ test.describe("Custom Self-hosted MCP Server - installation and static credentia
         .getByRole("dialog")
         .filter({ visible: true })
         .last()
-        .getByRole("button", { name: /^Connections\b/ });
+        .getByRole("button", { name: /^(Connections|Credentials)\b/ });
       await expect(connectionsButton).toBeVisible();
       await closeOpenDialogs(page);
 
@@ -205,7 +204,6 @@ test.describe("Custom Self-hosted MCP Server - installation and static credentia
           })
           .click();
         await page.keyboard.press("Escape");
-        await page.waitForTimeout(200);
         await saveOpenProfileDialog(page);
 
         // Then we revoke first credential in Manage Credentials dialog, then close dialog
@@ -324,7 +322,7 @@ test("Verify Manage Credentials dialog shows correct other users credentials", a
       .getByRole("dialog")
       .filter({ visible: true })
       .last()
-      .getByRole("button", { name: /^Connections\b/ });
+      .getByRole("button", { name: /^(Connections|Credentials)\b/ });
     await expect(connectionsButton).toBeVisible();
     await closeOpenDialogs(page);
   };

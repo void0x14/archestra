@@ -1,4 +1,5 @@
-import { type DocsPage, getDocsUrl, WEBSITE_URL } from "@shared";
+import { type DocsPage, getDocsUrl } from "@shared/docs";
+import { WEBSITE_URL } from "@shared/consts";
 import appConfig from "@/lib/config/config";
 
 /**

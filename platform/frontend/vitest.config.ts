@@ -1,17 +1,25 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
+const sharedDir = path.resolve(__dirname, "../shared");
+const sharedPkg = JSON.parse(
+  readFileSync(path.join(sharedDir, "package.json"), "utf-8"),
+);
+const sharedAliases: Record<string, string> = {};
+for (const [key, value] of Object.entries<string>(sharedPkg.exports)) {
+  const subpath = key.slice(2);
+  if (subpath) {
+    sharedAliases[`@shared/${subpath}`] = path.resolve(sharedDir, value);
+  }
+}
+sharedAliases["@shared"] = path.resolve(sharedDir, "index.ts");
+
 export default defineConfig({
   plugins: [tsconfigPaths()],
   resolve: {
-    alias: {
-      "@shared/access-control": path.resolve(
-        __dirname,
-        "../shared/access-control.ts",
-      ),
-      "@shared": path.resolve(__dirname, "../shared/index.ts"),
-    },
+    alias: sharedAliases,
   },
   test: {
     globals: true,

@@ -63,6 +63,7 @@ export async function loginViaApi(
       (response.status() === 429 || response.status() >= 500) &&
       attempt < maxRetries
     ) {
+      // intentional: exponential backoff delay between retries
       await page.waitForTimeout(delay);
       delay *= 2;
       continue;

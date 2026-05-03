@@ -1,4 +1,4 @@
-import type { IncomingEmailSecurityMode } from "@shared";
+import type { IncomingEmailSecurityMode } from "@shared/incoming-email";
 import { type SQL, sql } from "drizzle-orm";
 import {
   boolean,

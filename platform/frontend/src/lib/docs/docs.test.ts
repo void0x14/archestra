@@ -1,4 +1,4 @@
-import { DocsPage, getDocsUrl } from "@shared";
+import { DocsPage, getDocsUrl } from "@shared/docs";
 import { describe, expect, it, vi } from "vitest";
 
 const mockConfig = {

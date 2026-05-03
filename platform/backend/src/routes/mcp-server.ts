@@ -75,12 +75,11 @@ const mcpServerRoutes: FastifyPluginAsyncZod = async (fastify) => {
         { mcpServerInstallation: ["admin"] },
         headers,
       );
-      let allServers = await McpServerModel.findAll(user.id, isMcpServerAdmin);
-
-      // Filter by catalogId if provided
-      if (catalogId) {
-        allServers = allServers.filter((s) => s.catalogId === catalogId);
-      }
+      let allServers = await McpServerModel.findAll(
+        user.id,
+        isMcpServerAdmin,
+        catalogId,
+      );
 
       if (assignmentScope) {
         const target = {
